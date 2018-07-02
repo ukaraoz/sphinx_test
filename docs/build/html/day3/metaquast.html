@@ -1,0 +1,148 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MetaQUAST &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Gene Prediction" href="../day4/index.html" />
+    <link rel="prev" title="Read Mapping" href="mapping.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../day4/index.html" title="Gene Prediction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mapping.html" title="Read Mapping"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Assembly Evaluation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="metaquast">
+<h1>MetaQUAST<a class="headerlink" href="#metaquast" title="Permalink to this headline">¶</a></h1>
+<p>QUAST stands for QUality ASsessment Tool. The tool evaluates genome
+assemblies by computing various metrics.  You can find all project
+news and the latest version of the tool at <a class="reference external" href="http://sourceforge.net/projects/quast">sourceforge</a>.  QUAST utilizes MUMmer,
+GeneMarkS, GeneMark-ES, GlimmerHMM, and GAGE. In addition, MetaQUAST
+uses MetaGeneMark, Krona tools, BLAST, and SILVA 16S rRNA
+database. See the <a class="reference external" href="http://quast.bioinf.spbau.ru//">QUAST home page</a>
+for more info.</p>
+<p>To call <code class="docutils literal notranslate"><span class="pre">metaquast.py</span></code> we have to provide reference genomes which
+are used to calculate a number of different metrics for evaluation of
+the assembly. In real-world metagenomics, these references are usually
+not available, of course:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">metaquast</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">metaquast</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">threads</span> <span class="mi">24</span> <span class="o">--</span><span class="n">gene</span><span class="o">-</span><span class="n">finding</span> <span class="o">--</span><span class="n">meta</span> \
+<span class="o">-</span><span class="n">R</span> <span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Aquifex_aeolicus_VF5</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Bdellovibrio_bacteriovorus_HD100</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydia_psittaci_MN</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydophila_pneumoniae_CWL029</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydophila_pneumoniae_J138</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydophila_pneumoniae_LPCoLN</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydophila_pneumoniae_TW_183</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Chlamydophila_psittaci_C19_98</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Finegoldia_magna_ATCC_29328</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Fusobacterium_nucleatum_ATCC_25586</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Helicobacter_pylori_26695</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Lawsonia_intracellularis_PHE_MN1_00</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Mycobacterium_leprae_TN</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Porphyromonas_gingivalis_W83</span><span class="o">.</span><span class="n">fna</span><span class="p">,</span>\
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="n">DATA</span><span class="o">/</span><span class="n">WGS</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">Wigglesworthia_glossinidia</span><span class="o">.</span><span class="n">fna</span> \
+<span class="o">-</span><span class="n">o</span> <span class="n">quast</span> \
+<span class="o">-</span><span class="n">l</span> <span class="n">MegaHit</span><span class="p">,</span><span class="n">Ray_31</span><span class="p">,</span><span class="n">velvet_31</span><span class="p">,</span><span class="n">velvet_51</span><span class="p">,</span><span class="n">idba_ud</span> \
+<span class="n">megahit_out</span><span class="o">/</span><span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span> \
+<span class="n">ray_31</span><span class="o">/</span><span class="n">Contigs</span><span class="o">.</span><span class="n">fasta</span> \
+<span class="n">velvet_31</span><span class="o">/</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span> \
+<span class="n">velvet_51</span><span class="o">/</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span> \
+<span class="n">idba_ud_out</span><span class="o">/</span><span class="n">contig</span><span class="o">.</span><span class="n">fa</span>
+</pre></div>
+</div>
+<p>QUAST generates HTML reports including a number of interactive graphics.
+You can load the reports into your web browser:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">firefox</span> <span class="n">quast</span><span class="o">/</span><span class="n">summary</span><span class="o">/</span><span class="n">report</span><span class="o">.</span><span class="n">html</span>
+<span class="n">firefox</span> <span class="n">quast</span><span class="o">/</span><span class="n">combined_quast_output</span><span class="o">/</span><span class="n">report</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mapping.html"
+                        title="previous chapter">Read Mapping</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../day4/index.html"
+                        title="next chapter">Gene Prediction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day3/metaquast.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../day4/index.html" title="Gene Prediction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mapping.html" title="Read Mapping"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Assembly Evaluation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MaxBin Binning &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MetaBAT Binning" href="metabat.html" />
+    <link rel="prev" title="Binning" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="metabat.html" title="MetaBAT Binning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Binning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Binning</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="maxbin-binning">
+<h1>MaxBin Binning<a class="headerlink" href="#maxbin-binning" title="Permalink to this headline">¶</a></h1>
+<p>MaxBin is a software that is capable of clustering metagenomic contigs into different bins, each consists of contigs from one species. MaxBin uses the nucleotide composition information and contig abundance information to do achieve binning through an Expectation-Maximization algorithm. For users’ convenience
+MaxBin will report genome-related statistics, including estimated
+completeness, GC content and genome size in the binning summary
+page. See the <a class="reference external" href="http://downloads.jbei.org/data/microbial_communities/MaxBin/MaxBin.html">MaxBin home page</a> for more info.</p>
+<p>Let’s run a MaxBin binning on the MEGAHIT assembly. First, we need to generate an
+abundance file from the mappes reads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span><span class="n">megahit_out</span>
+<span class="n">pileup</span><span class="o">.</span><span class="n">sh</span> <span class="ow">in</span><span class="o">=</span><span class="n">megahit</span><span class="o">.</span><span class="n">sam</span>  <span class="n">out</span><span class="o">=</span><span class="n">cov</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">awk</span> <span class="s1">&#39;{print $1&quot;</span><span class="se">\t</span><span class="s1">&quot;$5}&#39;</span> <span class="n">cov</span><span class="o">.</span><span class="n">txt</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="s1">&#39;^#&#39;</span> <span class="o">&gt;</span> <span class="n">abundance</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Next, we can run MaxBin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">maxbin</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">MaxBin</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">run_MaxBin</span><span class="o">.</span><span class="n">pl</span> <span class="o">-</span><span class="n">thread</span> <span class="mi">24</span> <span class="o">-</span><span class="n">contig</span> <span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span> <span class="o">-</span><span class="n">out</span> <span class="n">maxbin</span> <span class="o">-</span><span class="n">abund</span> <span class="n">abundance</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Assume your output file prefix is (out). MaxBin will generate information using this file header as follows.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>(out).0XX.fasta</td>
+<td>the XX bin. XX are numbers, e.g. out.001.fasta</td>
+</tr>
+<tr class="row-even"><td>(out).summary</td>
+<td>summary file describing which contigs are being
+classified into which bin.</td>
+</tr>
+<tr class="row-odd"><td>(out).log</td>
+<td>log file recording the core steps of MaxBin algorithm</td>
+</tr>
+<tr class="row-even"><td>(out).marker</td>
+<td>marker gene presence numbers for each bin. This table
+is ready to be plotted by R or other 3rd-party software.</td>
+</tr>
+<tr class="row-odd"><td>(out).marker.pdf</td>
+<td>visualization of the marker gene presence numbers using R</td>
+</tr>
+<tr class="row-even"><td>(out).noclass</td>
+<td>all sequences that pass the minimum length threshold but
+are not classified successfully.</td>
+</tr>
+<tr class="row-odd"><td>(out).tooshort</td>
+<td>all sequences that do not meet the minimum length threshold.</td>
+</tr>
+</tbody>
+</table>
+<p>Now you can run a gene prediction on each genome bin and BLAST one sequence for each bin
+for a (very crude!) classification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>for i in max*fasta; do prodigal -p meta -a $i.genes.faa -d $i.genes.fna -f gff -o $i.genes.gff -i $i&amp; done
+</pre></div>
+</div>
+<p>Does the abundance of the bins match the 16S profile of the community?</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Binning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="metabat.html"
+                        title="next chapter">MetaBAT Binning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day2/maxbin.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="metabat.html" title="MetaBAT Binning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Binning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Binning</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Ray Assembly &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Binning" href="../day2/index.html" />
+    <link rel="prev" title="IDBA-UD Assembly" href="idba_ud.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../day2/index.html" title="Binning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="idba_ud.html" title="IDBA-UD Assembly"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Assembly</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ray-assembly">
+<h1>Ray Assembly<a class="headerlink" href="#ray-assembly" title="Permalink to this headline">¶</a></h1>
+<p>Ray is a parallel software that computes de novo genome assemblies with next-generation sequencing data.
+Ray is written in C++ and can run in parallel on numerous interconnected computers using the message-passing interface (MPI) standard. See the <a class="reference external" href="http://denovoassembler.sourceforge.net/">Ray home page</a> for more info.</p>
+<p>Ray can be run by the following command using a kmer-length of 31. As our compute instance have multiple cores, we specify this in the <a href="#id1"><span class="problematic" id="id2">`</span></a>mpiexec -n 48 ` command to let Ray know it should use 48 parallel MPI processes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">48</span> <span class="o">-</span><span class="n">N</span> <span class="n">ray</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">openmpi</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">mpiexec</span> <span class="o">-</span><span class="n">n</span> <span class="mi">48</span> <span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">Ray</span> <span class="o">-</span><span class="n">k</span> <span class="mi">31</span> <span class="o">-</span><span class="n">p</span> <span class="n">read1</span><span class="o">.</span><span class="n">fq</span> <span class="n">read2</span><span class="o">.</span><span class="n">fq</span> <span class="o">-</span><span class="n">o</span> <span class="n">ray_31</span>
+</pre></div>
+</div>
+<p>This will create the output directory <cite>ray_31</cite> and the final contigs are located in <cite>ray_31/Contigs.fasta</cite>.
+Again, let’s get some basic statistics on the contigs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">getN50</span><span class="o">.</span><span class="n">pl</span> <span class="o">-</span><span class="n">s</span> <span class="mi">500</span> <span class="o">-</span><span class="n">f</span> <span class="n">ray_31</span><span class="o">/</span><span class="n">Contigs</span><span class="o">.</span><span class="n">fasta</span>
+</pre></div>
+</div>
+<p>Now that you have run assemblies using Velvet, MEGAHIT, IDBA-UD and Ray, let’s have a quick look at the assembly statistics of all of them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span>
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">metagencourse</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">get_assembly_stats</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Most jobs above will be started on the compute cluster using the <code class="docutils literal notranslate"><span class="pre">qsub</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">qstat</span></code>:  check the status and JOBNUMBER of your jobs</li>
+<li><code class="docutils literal notranslate"><span class="pre">qdel</span> <span class="pre">JOBNUMBER</span></code>: delete job with job number JOBNUMBER</li>
+</ul>
+</div></blockquote>
+<p>We usually submit the jobs to the cluster giving them a job name by using <code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">JOBNAME</span></code>.
+This will create log-files named</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.oJOBNUMBER</span></code>: standard output messages of the tool</li>
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.eJOBNUMBER</span></code>: standard error messages of the tool</li>
+</ul>
+</div></blockquote>
+<p class="last">You can look into these files by typing e.g. <code class="docutils literal notranslate"><span class="pre">less</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">q</span></code> to quit)
+or <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">^C</span></code> to quit).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="idba_ud.html"
+                        title="previous chapter">IDBA-UD Assembly</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../day2/index.html"
+                        title="next chapter">Binning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day1/ray.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../day2/index.html" title="Binning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="idba_ud.html" title="IDBA-UD Assembly"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Assembly</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

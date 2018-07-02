@@ -1,0 +1,134 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MetaBAT Binning &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Assembly Evaluation" href="../day3/index.html" />
+    <link rel="prev" title="MaxBin Binning" href="maxbin.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../day3/index.html" title="Assembly Evaluation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="maxbin.html" title="MaxBin Binning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Binning</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="metabat-binning">
+<h1>MetaBAT Binning<a class="headerlink" href="#metabat-binning" title="Permalink to this headline">¶</a></h1>
+<p>MetaBAT, An Efficient Tool for Accurately Reconstructing Single
+Genomes from Complex Microbial Communities.</p>
+<p>Grouping large genomic fragments assembled from shotgun metagenomic
+sequences to deconvolute complex microbial communities, or metagenome
+binning, enables the study of individual organisms and their
+interactions. MetaBAT is an automated metagenome binning software
+which integrates empirical probabilistic distances of genome abundance
+and tetranucleotide frequency. See the <a class="reference external" href="https://bitbucket.org/berkeleylab/metabat">MetaBAT home page</a>
+for more info.</p>
+<p>Let’s run a MetaBAT binning on the MEGAHIT assembly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span><span class="n">megahit_out</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">12</span> <span class="o">-</span><span class="n">N</span> <span class="n">metabat</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">runMetaBat</span><span class="o">.</span><span class="n">sh</span> <span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span> <span class="n">megahit_sorted</span><span class="o">.</span><span class="n">bam</span>
+</pre></div>
+</div>
+<p>MetaBAT will generate 12 bins from our assembly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">1.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">2.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">3.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">4.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">5.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">6.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">7.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">8.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">9.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">10.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">11.</span><span class="n">fa</span>
+<span class="n">final</span><span class="o">.</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span><span class="o">.</span><span class="n">metabat</span><span class="o">-</span><span class="n">bins</span><span class="o">-.</span><span class="mf">12.</span><span class="n">fa</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="maxbin.html"
+                        title="previous chapter">MaxBin Binning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../day3/index.html"
+                        title="next chapter">Assembly Evaluation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day2/metabat.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../day3/index.html" title="Assembly Evaluation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="maxbin.html" title="MaxBin Binning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Binning</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

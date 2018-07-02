@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>IDBA-UD Assembly &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Ray Assembly" href="ray.html" />
+    <link rel="prev" title="MEGAHIT Assembly" href="megahit.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ray.html" title="Ray Assembly"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="megahit.html" title="MEGAHIT Assembly"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Assembly</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="idba-ud-assembly">
+<h1>IDBA-UD Assembly<a class="headerlink" href="#idba-ud-assembly" title="Permalink to this headline">¶</a></h1>
+<p>IDBA is the basic iterative de Bruijn graph assembler for second-generation sequencing reads. IDBA-UD, an extension of IDBA, is designed to utilize paired-end reads to assemble low-depth regions and use progressive depth on contigs to reduce errors in high-depth regions. It is a generic purpose assembler and epspacially good for single-cell and metagenomic sequencing data. See the <a class="reference external" href="https://github.com/loneknightpy/idba">IDBA home page</a> for more info.</p>
+<p>IDBA-UD requires paired-end reads stored in single FastA file and a pair of reads is in consecutive two lines. You can use <cite>fq2fa</cite> (part of the IDBA repository) to merge two FastQ read files to a single file. The following command will generate a FASTA formatted file called <cite>reads12.fas</cite> by “shuffling” the reads from FASTQ files <cite>read1.fq</cite> and <cite>read2.fq</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">N</span> <span class="n">fq2fa</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">fq2fa</span> <span class="o">--</span><span class="n">merge</span> <span class="n">read1</span><span class="o">.</span><span class="n">fq</span> <span class="n">read2</span><span class="o">.</span><span class="n">fq</span> <span class="n">reads12</span><span class="o">.</span><span class="n">fas</span>
+</pre></div>
+</div>
+<p>IDBA-UD can be run by the following command. As our compute instances have multiple cores, we use the option <cite>–num_threads 24</cite> to tell IDBA-UD it should use 24 parallel threads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">idba_ud</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">idba_ud</span> <span class="o">-</span><span class="n">r</span> <span class="n">reads12</span><span class="o">.</span><span class="n">fas</span> <span class="o">--</span><span class="n">num_threads</span> <span class="mi">24</span> <span class="o">-</span><span class="n">o</span> <span class="n">idba_ud_out</span>
+</pre></div>
+</div>
+<p>The contig sequences are located in the <cite>idba_ud_out</cite> directory in file <cite>contig.fa</cite>. Again, let’s get some  basic statistics on the contigs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">getN50</span><span class="o">.</span><span class="n">pl</span> <span class="o">-</span><span class="n">s</span> <span class="mi">500</span> <span class="o">-</span><span class="n">f</span> <span class="n">idba_ud_out</span><span class="o">/</span><span class="n">contig</span><span class="o">.</span><span class="n">fa</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Most jobs above will be started on the compute cluster using the <code class="docutils literal notranslate"><span class="pre">qsub</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">qstat</span></code>:  check the status and JOBNUMBER of your jobs</li>
+<li><code class="docutils literal notranslate"><span class="pre">qdel</span> <span class="pre">JOBNUMBER</span></code>: delete job with job number JOBNUMBER</li>
+</ul>
+</div></blockquote>
+<p>We usually submit the jobs to the cluster giving them a job name by using <code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">JOBNAME</span></code>.
+This will create log-files named</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.oJOBNUMBER</span></code>: standard output messages of the tool</li>
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.eJOBNUMBER</span></code>: standard error messages of the tool</li>
+</ul>
+</div></blockquote>
+<p class="last">You can look into these files by typing e.g. <code class="docutils literal notranslate"><span class="pre">less</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">q</span></code> to quit)
+or <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">^C</span></code> to quit).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="megahit.html"
+                        title="previous chapter">MEGAHIT Assembly</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ray.html"
+                        title="next chapter">Ray Assembly</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day1/idba_ud.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ray.html" title="Ray Assembly"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="megahit.html" title="MEGAHIT Assembly"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Assembly</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

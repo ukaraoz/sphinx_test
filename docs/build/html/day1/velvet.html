@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Velvet Assembly &#8212; sphinx_test 1 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MEGAHIT Assembly" href="megahit.html" />
+    <link rel="prev" title="Assembly" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="megahit.html" title="MEGAHIT Assembly"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Assembly"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Assembly</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="velvet-assembly">
+<h1>Velvet Assembly<a class="headerlink" href="#velvet-assembly" title="Permalink to this headline">¶</a></h1>
+<p>Velvet was one of the first de novo genomic assemblers specially designed for short read sequencing technologies. It was  developed by Daniel Zerbino and Ewan Birney at the European Bioinformatics Institute (EMBL-EBI). Velvet currently takes in short read sequences, removes errors then produces high quality unique contigs. It then uses paired-end read and long read information, when available, to retrieve the repeated areas between contigs. See the <a class="reference external" href="https://www.ebi.ac.uk/~zerbino/velvet/">Velvet home page</a> for more info.</p>
+<div class="section" id="step-1-velveth">
+<h2>Step 1: velveth<a class="headerlink" href="#step-1-velveth" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">velveth</span></code> takes in a number of sequence files, produces a hashtable, then
+outputs two files in an output directory (creating it if necessary), Sequences
+and Roadmaps, which are necessary for running <code class="docutils literal notranslate"><span class="pre">velvetg</span></code> in the next step.</p>
+<p>Let’s create multiple hashtables using kmer-lengths of 31 and 51. We are going to
+submit the jobs to the compute cluster using <code class="docutils literal notranslate"><span class="pre">qsub</span></code>,asking for a machine with
+24 cores (<code class="docutils literal notranslate"><span class="pre">-pe</span> <span class="pre">multislot</span> <span class="pre">24</span></code>). You can check the status of your job using the
+command <code class="docutils literal notranslate"><span class="pre">qstat</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">workdir</span><span class="o">/</span><span class="n">assembly</span><span class="o">/</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">velveth_31</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">velveth</span> <span class="n">velvet_31</span> <span class="mi">31</span> <span class="o">-</span><span class="n">shortPaired</span> <span class="o">-</span><span class="n">fastq</span> <span class="o">-</span><span class="n">separate</span> <span class="n">read1</span><span class="o">.</span><span class="n">fq</span> <span class="n">read2</span><span class="o">.</span><span class="n">fq</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">velveth_51</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">velveth</span> <span class="n">velvet_51</span> <span class="mi">51</span> <span class="o">-</span><span class="n">shortPaired</span> <span class="o">-</span><span class="n">fastq</span> <span class="o">-</span><span class="n">separate</span> <span class="n">read1</span><span class="o">.</span><span class="n">fq</span> <span class="n">read2</span><span class="o">.</span><span class="n">fq</span>
+</pre></div>
+</div>
+<p>Note: You can check the status of your job using the command <code class="docutils literal notranslate"><span class="pre">qstat</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;statler:~/workdir/assembly&gt;qstat</span>
+<span class="go">job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID</span>
+<span class="go">-----------------------------------------------------------------------------------------------------------------</span>
+<span class="go">3888958 0.65000 velveth_31 asczyrba     r     11/21/2015 07:18:29 all.q@suc01016.CeBiTec.Uni-Bie    24</span>
+<span class="go">3888959 0.45213 velveth_51 asczyrba     r     11/21/2015 07:18:45 all.q@suc01003.CeBiTec.Uni-Bie    24</span>
+</pre></div>
+</div>
+<p>If you do not see your jobs using <code class="docutils literal notranslate"><span class="pre">qstat</span></code> anymore, they are finished.
+You should have two output directories for the two different kmer-lengths: <cite>velvet_31</cite> and <cite>velvet_51</cite>.</p>
+</div>
+<div class="section" id="step-2-velvetg">
+<h2>Step 2: velvetg<a class="headerlink" href="#step-2-velvetg" title="Permalink to this headline">¶</a></h2>
+<p>Now we have to start the actual assembly using <code class="docutils literal notranslate"><span class="pre">velvetg</span></code>. <code class="docutils literal notranslate"><span class="pre">velvetg</span></code> is the core of Velvet where the de Bruijn graph is built then manipulated. Let’s run assemblies for both kmer-lengths. See the <a class="reference external" href="https://www.ebi.ac.uk/~zerbino/velvet/Manual.pdf">Velvet manual</a> for more info about parameter settings. Again, we submit the job to the compute cluster:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">velvetg_31</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">velvetg</span> <span class="n">velvet_31</span> <span class="o">-</span><span class="n">cov_cutoff</span> <span class="n">auto</span> <span class="o">-</span><span class="n">ins_length</span> <span class="mi">270</span> <span class="o">-</span><span class="n">min_contig_lgth</span> <span class="mi">500</span> <span class="o">-</span><span class="n">exp_cov</span> <span class="n">auto</span>
+
+<span class="n">qsub</span> <span class="o">-</span><span class="n">cwd</span> <span class="o">-</span><span class="n">pe</span> <span class="n">multislot</span> <span class="mi">24</span> <span class="o">-</span><span class="n">N</span> <span class="n">velvetg_51</span> <span class="o">-</span><span class="n">l</span> <span class="n">mtc</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">b</span> <span class="n">y</span> \
+<span class="o">/</span><span class="n">vol</span><span class="o">/</span><span class="n">cmg</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">velvetg</span> <span class="n">velvet_51</span> <span class="o">-</span><span class="n">cov_cutoff</span> <span class="n">auto</span> <span class="o">-</span><span class="n">ins_length</span> <span class="mi">270</span> <span class="o">-</span><span class="n">min_contig_lgth</span> <span class="mi">500</span> <span class="o">-</span><span class="n">exp_cov</span> <span class="n">auto</span>
+</pre></div>
+</div>
+<p>The contig sequences are located in the <cite>velvet_31</cite> and <cite>velvet_51</cite> directories in file <cite>contigs.fa</cite>. Let’s get some very basic statistics on the contigs. The script <code class="docutils literal notranslate"><span class="pre">getN50.pl</span></code> reads the contig file and computes the total length of the assembly, number of contigs, N50 and largest contig size. In our example we will exclude contigs shorter than 500bp (option <cite>-s 500</cite>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">getN50</span><span class="o">.</span><span class="n">pl</span> <span class="o">-</span><span class="n">s</span> <span class="mi">500</span> <span class="o">-</span><span class="n">f</span> <span class="n">velvet_31</span><span class="o">/</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span>
+<span class="n">getN50</span><span class="o">.</span><span class="n">pl</span> <span class="o">-</span><span class="n">s</span> <span class="mi">500</span> <span class="o">-</span><span class="n">f</span> <span class="n">velvet_51</span><span class="o">/</span><span class="n">contigs</span><span class="o">.</span><span class="n">fa</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Most jobs above will be started on the compute cluster using the <code class="docutils literal notranslate"><span class="pre">qsub</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">qstat</span></code>:  check the status and JOBNUMBER of your jobs</li>
+<li><code class="docutils literal notranslate"><span class="pre">qdel</span> <span class="pre">JOBNUMBER</span></code>: delete job with job number JOBNUMBER</li>
+</ul>
+</div></blockquote>
+<p>We usually submit the jobs to the cluster giving them a job name by using <code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">JOBNAME</span></code>.
+This will create log-files named</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.oJOBNUMBER</span></code>: standard output messages of the tool</li>
+<li><code class="docutils literal notranslate"><span class="pre">JOBNAME.eJOBNUMBER</span></code>: standard error messages of the tool</li>
+</ul>
+</div></blockquote>
+<p class="last">You can look into these files by typing e.g. <code class="docutils literal notranslate"><span class="pre">less</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">q</span></code> to quit)
+or <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">JOBNAME.oJOBNUMBER</span></code> (hit <code class="docutils literal notranslate"><span class="pre">^C</span></code> to quit).</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Velvet Assembly</a><ul>
+<li><a class="reference internal" href="#step-1-velveth">Step 1: velveth</a></li>
+<li><a class="reference internal" href="#step-2-velvetg">Step 2: velvetg</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Assembly</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="megahit.html"
+                        title="next chapter">MEGAHIT Assembly</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/day1/velvet.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="megahit.html" title="MEGAHIT Assembly"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Assembly"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">sphinx_test 1 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Assembly</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ulas Karaoz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

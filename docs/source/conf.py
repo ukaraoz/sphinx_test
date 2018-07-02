@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'sphinx_test'
+project = 'sphinx_test 1'
 copyright = '2018, Ulas Karaoz'
 author = 'Ulas Karaoz'
 
